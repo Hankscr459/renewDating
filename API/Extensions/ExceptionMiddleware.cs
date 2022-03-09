@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using API.Errors;
+using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace API.Extensions
 {
@@ -18,6 +19,15 @@ namespace API.Extensions
 
         public async Task InvokeAsync(HttpContext context)
         {
+            var controllerActionDescriptor = context
+                .GetEndpoint()?
+                .Metadata
+                .GetMetadata<ControllerActionDescriptor>();
+
+            var controllerName = controllerActionDescriptor.ControllerName;
+            var actionName = controllerActionDescriptor.ActionName;
+            Console.WriteLine("controllerName: {0}", controllerName);
+            Console.WriteLine("actionName: {0}", actionName);
             try
             {
                 await _next(context);
