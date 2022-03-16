@@ -1,4 +1,5 @@
 
+using API.DTos;
 using API.DTOs;
 using API.Extensions;
 using API.Interfaces;
@@ -16,16 +17,16 @@ namespace API.Controllers
             _userRepository = userRepository;
         }
 
-        [HttpPost("{username}")]
-        public async Task<ActionResult> AddLike(string username)
+        [HttpPost("addLikes")]
+        public async Task<ActionResult> AddLike([FromBody]addLikeDto addLikeDto)
         {
             var sourceUserId = User.GetUserId();
-            var likedUser = await _userRepository.GetUserByUsernameAsync(username);
+            var likedUser = await _userRepository.GetUserByUsernameAsync(addLikeDto.username);
             var sourceUser = await _likesRepository.GetUserWithLikes(sourceUserId);
 
             if (likedUser == null) return NotFound();
 
-            if (sourceUser.UserName == username) return BadRequest("You cannot like yourself");
+            if (sourceUser.UserName == addLikeDto.username) return BadRequest("You cannot like yourself");
 
             var userLike = await _likesRepository.GetUserLike(sourceUserId, likedUser.Id);
             if (userLike != null) return BadRequest("You already like this user");
